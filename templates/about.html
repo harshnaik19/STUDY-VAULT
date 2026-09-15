@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}About & Demo Guide - StudyVault{% endblock %}
+
+{% block content %}
+<div class="top-bar">
+  <div class="page-title">
+    <h2>About StudyVault & Demonstration Guide</h2>
+    <p>Understand the core concept and run through the standard demonstration workflow.</p>
+  </div>
+</div>
+
+<div class="panel" style="margin-bottom: 24px;">
+  <h3 style="margin-bottom: 12px; font-family: 'Outfit'; color: #818cf8;">
+    <i class="fa-solid fa-graduation-cap"></i> Project Purpose
+  </h3>
+  <p style="color: var(--text-muted); line-height: 1.6; font-size: 14px;">
+    <strong>StudyVault</strong> is created for college students to bridge the gap between bookmarking study resources (websites, YouTube videos, GitHub repositories, documentation) and actually completing study actions.
+    Unlike generic task managers, StudyVault enforces a direct link:
+  </p>
+  <div style="background-color: var(--bg-input); padding: 16px; border-radius: 10px; margin: 16px 0; display: flex; align-items: center; justify-content: space-around; font-weight: 600; font-size: 14px; text-align: center; border: 1px solid var(--border-color);">
+    <div><i class="fa-solid fa-link" style="color: var(--primary);"></i> Study Resource</div>
+    <div>&rarr;</div>
+    <div><i class="fa-solid fa-list-check" style="color: var(--priority-medium);"></i> Action Item / Task</div>
+    <div>&rarr;</div>
+    <div><i class="fa-solid fa-calendar-days" style="color: var(--priority-high);"></i> Target Deadline</div>
+    <div>&rarr;</div>
+    <div><i class="fa-solid fa-circle-check" style="color: var(--status-completed);"></i> Completion</div>
+  </div>
+</div>
+
+<div class="panel">
+  <h3 style="margin-bottom: 16px; font-family: 'Outfit'; color: var(--status-completed);">
+    <i class="fa-solid fa-play"></i> Demonstration Flow Checklist
+  </h3>
+  <div style="display: flex; flex-direction: column; gap: 14px; color: var(--text-muted); font-size: 14px;">
+    <div style="display: flex; gap: 12px; align-items: flex-start;">
+      <span style="background: var(--bg-input); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white;">1</span>
+      <div>
+        <strong>Open Dashboard</strong>: View total study resources, completed tasks, in progress items, subject breakdown counters, and upcoming deadline list.
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; align-items: flex-start;">
+      <span style="background: var(--bg-input); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white;">2</span>
+      <div>
+        <strong>Add a New Resource & Auto Title Fetch</strong>: Click <em>"Add Resource"</em>, enter a URL such as <code>https://flask.palletsprojects.com</code>, click <strong>"Auto Title"</strong> (or let blur populate it). Notice BeautifulSoup automatically retrieves the page title.
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; align-items: flex-start;">
+      <span style="background: var(--bg-input); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white;">3</span>
+      <div>
+        <strong>Duplicate URL Detection</strong>: Re-enter an existing URL in the form; notice the warning banner stating <em>"This resource has already been saved."</em>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; align-items: flex-start;">
+      <span style="background: var(--bg-input); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white;">4</span>
+      <div>
+        <strong>Set Task & Deadline</strong>: Attach a specific action (e.g. <em>"Complete authentication module"</em>) and deadline date.
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; align-items: flex-start;">
+      <span style="background: var(--bg-input); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white;">5</span>
+      <div>
+        <strong>Live Search & Filter</strong>: On the Resources page, type in the search bar or select filters (Subject, Priority, Status) to instantly refine cards without reloading.
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; align-items: flex-start;">
+      <span style="background: var(--bg-input); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white;">6</span>
+      <div>
+        <strong>Mark Complete & Check Dashboard</strong>: Change status dropdown to <em>"Completed"</em>. Return to Dashboard to see completion counters update live.
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; align-items: flex-start;">
+      <span style="background: var(--bg-input); width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: white;">7</span>
+      <div>
+        <strong>Star as Favorite & Archive/Restore</strong>: Star an item to view it in Favorites, or Archive an old resource and restore it from the Archived tab.
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

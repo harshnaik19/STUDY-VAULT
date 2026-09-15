@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - StudyVault{% endblock %}
+
+{% block content %}
+<div class="top-bar">
+  <div class="page-title">
+    <h2>Welcome back, {{ current_user.name }}!</h2>
+    <p>Track your personal study materials, active tasks, and upcoming deadlines.</p>
+  </div>
+  <div class="top-actions">
+    <button class="btn-cancel" onclick="reseedDemoData()" title="Reset Sample Data for Demo">
+      <i class="fa-solid fa-rotate-right"></i> Reset Demo Data
+    </button>
+    <button class="btn-save" onclick="openAddResourceModal()">
+      <i class="fa-solid fa-plus"></i> Add Resource
+    </button>
+  </div>
+</div>
+
+<!-- Metrics Cards Grid -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon-wrapper stat-total">
+      <i class="fa-solid fa-book-bookmark"></i>
+    </div>
+    <div class="stat-info">
+      <div class="stat-value" id="statTotal">{{ stats.total_resources }}</div>
+      <div class="stat-label">Total Resources</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon-wrapper stat-completed">
+      <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+    </div>
+    <div class="stat-info">
+      <div class="stat-value" id="statCompleted">{{ stats.completed_resources }}</div>
+      <div class="stat-label">Completed Tasks</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon-wrapper stat-progress">
+      <i class="fa-solid fa-spinner"></i>
+    </div>
+    <div class="stat-info">
+      <div class="stat-value" id="statProgress">{{ stats.in_progress_resources }}</div>
+      <div class="stat-label">In Progress</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon-wrapper stat-tasks">
+      <i class="fa-solid fa-list-check"></i>
+    </div>
+    <div class="stat-info">
+      <div class="stat-value" id="statPendingTasks">{{ stats.pending_tasks }}</div>
+      <div class="stat-label">Pending Tasks</div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon-wrapper stat-favorites">
+      <i class="fa-solid fa-star"></i>
+    </div>
+    <div class="stat-info">
+      <div class="stat-value" id="statFavorites">{{ stats.favorite_count }}</div>
+      <div class="stat-label">Favorites</div>
+    </div>
+  </div>
+</div>
+
+<!-- Dashboard Grid (Subject Breakdown + Upcoming Deadlines) -->
+<div class="dashboard-grid">
+  <!-- Left Side: Subject Breakdown -->
+  <div class="panel">
+    <div class="section-header">
+      <h3><i class="fa-solid fa-layer-group" style="color: var(--primary); margin-right: 8px;"></i> Resources by Subject</h3>
+      <a href="/resources" style="color: #818cf8; text-decoration: none; font-size: 13px; font-weight: 600;">View All &rarr;</a>
+    </div>
+
+    <div class="subject-list" id="subjectBreakdownList">
+      {% if stats.subject_breakdown %}
+        {% for sb in stats.subject_breakdown %}
+          {% set pct = (sb.count / stats.total_resources * 100)|round if stats.total_resources > 0 else 0 %}
+          <div class="subject-item">
+            <div class="subject-meta">
+              <span><strong>{{ sb.subject }}</strong></span>
+              <span class="text-muted" style="color: var(--text-muted);">{{ sb.count }} resources ({{ pct }}%)</span>
+            </div>
+            <div class="subject-bar-bg">
+              <div class="subject-bar-fill" style="width: {{ pct }}%;"></div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p style="color: var(--text-muted); font-size: 14px;">No subject data yet. Add study resources to see your breakdown!</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Right Side: Upcoming Deadlines -->
+  <div class="panel">
+    <div class="section-header">
+      <h3><i class="fa-solid fa-clock-rotate-left" style="color: var(--priority-medium); margin-right: 8px;"></i> Upcoming Deadlines</h3>
+    </div>
+
+    <div class="deadline-list" id="dashboardDeadlineList">
+      {% if stats.upcoming_deadlines %}
+        {% for d in stats.upcoming_deadlines %}
+          <div class="deadline-card" id="dash-deadline-{{ d.id }}">
+            <div class="deadline-info">
+              <h4>{{ d.title }}</h4>
+              <p><i class="fa-solid fa-check-double"></i> {{ d.task or 'Study Resource' }}</p>
+            </div>
+            <div class="deadline-tag">
+              <span class="due-date" data-date="{{ d.deadline }}">{{ d.deadline }}</span>
+              <span class="badge badge-priority-{{ d.priority|lower }}">{{ d.priority }}</span>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div style="text-align: center; color: var(--text-dim); padding: 20px 0;">
+          <i class="fa-solid fa-calendar-check" style="font-size: 28px; margin-bottom: 8px;"></i>
+          <p>No active deadlines pending!</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

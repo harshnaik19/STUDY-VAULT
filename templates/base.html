@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}StudyVault - Student Study Resource & Task Manager{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-vault"></i>
+        </div>
+        <div class="brand-text">
+          <h1>StudyVault</h1>
+          <p>Resource & Task Manager</p>
+        </div>
+      </div>
+
+      {% if current_user %}
+      <div style="background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+        <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #818cf8); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 14px;">
+          {{ current_user.name[0]|upper }}
+        </div>
+        <div style="overflow: hidden;">
+          <div style="font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main);">
+            {{ current_user.name }}
+          </div>
+          <div style="font-size: 10px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            {{ current_user.email }}
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <ul class="nav-menu">
+        <li class="nav-item {% if request.path == '/' %}active{% endif %}">
+          <a href="/">
+            <span class="nav-icon"><i class="fa-solid fa-chart-pie"></i></span>
+            Dashboard
+          </a>
+        </li>
+        <li class="nav-item {% if request.path == '/resources' %}active{% endif %}">
+          <a href="/resources">
+            <span class="nav-icon"><i class="fa-solid fa-book-bookmark"></i></span>
+            Resources
+          </a>
+        </li>
+        <li class="nav-item {% if request.path == '/favorites' %}active{% endif %}">
+          <a href="/favorites">
+            <span class="nav-icon"><i class="fa-solid fa-star"></i></span>
+            Favorites
+          </a>
+        </li>
+        <li class="nav-item {% if request.path == '/archived' %}active{% endif %}">
+          <a href="/archived">
+            <span class="nav-icon"><i class="fa-solid fa-box-archive"></i></span>
+            Archived
+          </a>
+        </li>
+        <li class="nav-item {% if request.path == '/about' %}active{% endif %}">
+          <a href="/about">
+            <span class="nav-icon"><i class="fa-solid fa-circle-info"></i></span>
+            About / Guide
+          </a>
+        </li>
+        <li class="nav-item" style="margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+          <a href="/logout" style="color: var(--priority-high);">
+            <span class="nav-icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+            Logout
+          </a>
+        </li>
+      </ul>
+
+      <button class="btn-quick-add" onclick="openAddResourceModal()">
+        <i class="fa-solid fa-plus"></i> Add New Resource
+      </button>
+    </aside>
+
+    <!-- Main View Content -->
+    <main class="main-content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <!-- Global Add / Edit Resource Modal -->
+  <div class="modal-overlay" id="resourceModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add New Study Resource</h3>
+        <button class="btn-close-modal" onclick="closeResourceModal()">&times;</button>
+      </div>
+      <form id="resourceForm" onsubmit="handleFormSubmit(event)">
+        <input type="hidden" id="resourceId" value="">
+        
+        <div class="form-group full">
+          <label for="resUrl">Resource Web URL *</label>
+          <div class="url-input-wrap">
+            <input type="url" id="resUrl" placeholder="https://example.com/flask-tutorial" required onblur="handleUrlBlur()">
+            <button type="button" class="btn-auto-title" onclick="fetchWebpageTitle()" id="btnAutoTitle">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Auto Title
+            </button>
+          </div>
+          <small id="urlDuplicateWarning" style="color: var(--priority-medium); font-size: 11px; margin-top: 4px; display: none;"></small>
+        </div>
+
+        <div class="form-group full">
+          <label for="resTitle">Resource Title *</label>
+          <input type="text" id="resTitle" placeholder="e.g. Python Flask Tutorial & Authentication" required>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="resSubject">Subject *</label>
+            <input type="text" id="resSubject" placeholder="e.g. Python, DBMS, Web Dev" required list="subjectSuggestions">
+            <datalist id="subjectSuggestions">
+              <option value="Python">
+              <option value="DBMS">
+              <option value="Java">
+              <option value="Web Dev">
+              <option value="Data Structures">
+              <option value="Networking">
+            </datalist>
+          </div>
+
+          <div class="form-group">
+            <label for="resCategory">Category</label>
+            <select id="resCategory">
+              <option value="Tutorial">Tutorial</option>
+              <option value="YouTube">YouTube</option>
+              <option value="GitHub">GitHub</option>
+              <option value="Documentation">Documentation</option>
+              <option value="Research">Research</option>
+              <option value="Notes">Notes</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group full">
+          <label for="resTask">Associated Action / Task (Optional)</label>
+          <input type="text" id="resTask" placeholder="e.g. Complete authentication section, read chapter 3">
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="resDeadline">Task Deadline</label>
+            <input type="date" id="resDeadline">
+          </div>
+
+          <div class="form-group">
+            <label for="resPriority">Priority</label>
+            <select id="resPriority">
+              <option value="Low">Low</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="resStatus">Completion Status</label>
+            <select id="resStatus">
+              <option value="Not Started">Not Started</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="resTags">Tags (comma separated)</label>
+            <input type="text" id="resTags" placeholder="e.g. flask, auth, python">
+          </div>
+        </div>
+
+        <div class="form-group full">
+          <label for="resDescription">Description / Notes</label>
+          <textarea id="resDescription" rows="3" placeholder="Key notes or summary about this study link..."></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" onclick="closeResourceModal()">Cancel</button>
+          <button type="submit" class="btn-save" id="btnSaveResource">Save Resource</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Global Delete Confirmation Modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-card" style="max-width: 420px; text-align: center;">
+      <div style="font-size: 40px; color: var(--priority-high); margin-bottom: 12px;">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <h3>Confirm Deletion</h3>
+      <p style="color: var(--text-muted); font-size: 14px; margin-top: 8px;">
+        Are you sure you want to permanently delete this resource? This action cannot be undone.
+      </p>
+      <div class="modal-footer" style="justify-content: center; margin-top: 20px;">
+        <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+        <button type="button" class="btn-save" style="background: var(--priority-high);" onclick="confirmDeleteResource()">Delete Permanently</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

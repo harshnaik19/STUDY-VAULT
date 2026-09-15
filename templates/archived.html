@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Archived - StudyVault{% endblock %}
+
+{% block content %}
+<div class="top-bar">
+  <div class="page-title">
+    <h2><i class="fa-solid fa-box-archive" style="color: var(--text-dim); margin-right: 6px;"></i> Archived Resources</h2>
+    <p>Stored resources kept out of active view. Restore them anytime.</p>
+  </div>
+</div>
+
+<input type="hidden" id="pageType" value="archived">
+
+<!-- Search Bar -->
+<div class="filter-bar">
+  <div class="search-box">
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    <input type="text" id="searchInput" placeholder="Search archived resources..." oninput="debounceSearch()">
+  </div>
+</div>
+
+<!-- Resource Grid -->
+<div class="resource-grid" id="resourceGrid">
+  <!-- Dynamically loaded -->
+</div>
+{% endblock %}

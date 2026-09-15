@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}All Resources - StudyVault{% endblock %}
+
+{% block content %}
+<div class="top-bar">
+  <div class="page-title">
+    <h2>Study Resources Catalog</h2>
+    <p>Organize, search, and manage your websites, tutorials, and repositories.</p>
+  </div>
+  <div class="top-actions">
+    <button class="btn-save" onclick="openAddResourceModal()">
+      <i class="fa-solid fa-plus"></i> Add Resource
+    </button>
+  </div>
+</div>
+
+<!-- Search & Combinable Filters Bar -->
+<div class="filter-bar">
+  <div class="search-box">
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    <input type="text" id="searchInput" placeholder="Search by title, subject, tags, task..." oninput="debounceSearch()">
+  </div>
+
+  <select id="filterSubject" class="filter-select" onchange="loadResources()">
+    <option value="">All Subjects</option>
+  </select>
+
+  <select id="filterCategory" class="filter-select" onchange="loadResources()">
+    <option value="">All Categories</option>
+    <option value="Tutorial">Tutorial</option>
+    <option value="YouTube">YouTube</option>
+    <option value="GitHub">GitHub</option>
+    <option value="Documentation">Documentation</option>
+    <option value="Research">Research</option>
+    <option value="Notes">Notes</option>
+    <option value="Other">Other</option>
+  </select>
+
+  <select id="filterStatus" class="filter-select" onchange="loadResources()">
+    <option value="">All Statuses</option>
+    <option value="Not Started">Not Started</option>
+    <option value="In Progress">In Progress</option>
+    <option value="Completed">Completed</option>
+  </select>
+
+  <select id="filterPriority" class="filter-select" onchange="loadResources()">
+    <option value="">All Priorities</option>
+    <option value="High">High Priority</option>
+    <option value="Medium">Medium Priority</option>
+    <option value="Low">Low Priority</option>
+  </select>
+
+  <button class="btn-cancel" onclick="resetFilters()" style="padding: 10px 14px; font-size: 13px;">
+    <i class="fa-solid fa-filter-circle-xmark"></i> Clear Filters
+  </button>
+</div>
+
+<!-- Resource Cards Grid -->
+<div class="resource-grid" id="resourceGrid">
+  <!-- Content dynamically loaded by app.js -->
+</div>
+{% endblock %}

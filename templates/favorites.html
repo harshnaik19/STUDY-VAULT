@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Favorites - StudyVault{% endblock %}
+
+{% block content %}
+<div class="top-bar">
+  <div class="page-title">
+    <h2><i class="fa-solid fa-star" style="color: #ec4899; margin-right: 6px;"></i> Favorite Study Resources</h2>
+    <p>Quick access to your starred tutorials, documentation, and high-priority tools.</p>
+  </div>
+  <div class="top-actions">
+    <button class="btn-save" onclick="openAddResourceModal()">
+      <i class="fa-solid fa-plus"></i> Add Resource
+    </button>
+  </div>
+</div>
+
+<input type="hidden" id="pageType" value="favorites">
+
+<!-- Search & Filter Bar -->
+<div class="filter-bar">
+  <div class="search-box">
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    <input type="text" id="searchInput" placeholder="Search favorites..." oninput="debounceSearch()">
+  </div>
+
+  <select id="filterSubject" class="filter-select" onchange="loadResources()">
+    <option value="">All Subjects</option>
+  </select>
+
+  <select id="filterCategory" class="filter-select" onchange="loadResources()">
+    <option value="">All Categories</option>
+    <option value="Tutorial">Tutorial</option>
+    <option value="YouTube">YouTube</option>
+    <option value="GitHub">GitHub</option>
+    <option value="Documentation">Documentation</option>
+    <option value="Research">Research</option>
+    <option value="Notes">Notes</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
+
+<!-- Favorite Resource Cards Grid -->
+<div class="resource-grid" id="resourceGrid">
+  <!-- Dynamically loaded -->
+</div>
+{% endblock %}
