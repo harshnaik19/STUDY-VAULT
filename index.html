@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyVault - Student Study Resource & Task Manager</title>
+  <link rel="stylesheet" href="static/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-vault"></i>
+        </div>
+        <div class="brand-text">
+          <h1>StudyVault</h1>
+          <p>Resource & Task Manager</p>
+        </div>
+      </div>
+
+      <div style="background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 10px 14px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+        <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #818cf8); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 14px;">
+          S
+        </div>
+        <div style="overflow: hidden;">
+          <div style="font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main);">
+            Student User
+          </div>
+          <div style="font-size: 10px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+            student@studyvault.edu
+          </div>
+        </div>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-item active" id="nav-dashboard" onclick="switchTab('dashboard')">
+          <a href="#">
+            <span class="nav-icon"><i class="fa-solid fa-chart-pie"></i></span>
+            Dashboard
+          </a>
+        </li>
+        <li class="nav-item" id="nav-resources" onclick="switchTab('resources')">
+          <a href="#">
+            <span class="nav-icon"><i class="fa-solid fa-book-bookmark"></i></span>
+            Resources
+          </a>
+        </li>
+        <li class="nav-item" id="nav-favorites" onclick="switchTab('favorites')">
+          <a href="#">
+            <span class="nav-icon"><i class="fa-solid fa-star"></i></span>
+            Favorites
+          </a>
+        </li>
+        <li class="nav-item" id="nav-archived" onclick="switchTab('archived')">
+          <a href="#">
+            <span class="nav-icon"><i class="fa-solid fa-box-archive"></i></span>
+            Archived
+          </a>
+        </li>
+        <li class="nav-item" id="nav-about" onclick="switchTab('about')">
+          <a href="#">
+            <span class="nav-icon"><i class="fa-solid fa-circle-info"></i></span>
+            About / Guide
+          </a>
+        </li>
+      </ul>
+
+      <button class="btn-quick-add" onclick="openAddModal()">
+        <i class="fa-solid fa-plus"></i> Add New Resource
+      </button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- DASHBOARD TAB -->
+      <div id="tab-dashboard" class="tab-pane">
+        <div class="top-bar">
+          <div class="page-title">
+            <h2>Welcome to StudyVault!</h2>
+            <p>Track your study materials, active tasks, and upcoming deadlines.</p>
+          </div>
+          <div class="top-actions">
+            <button class="btn-cancel" onclick="resetSampleData()" title="Reset Sample Data">
+              <i class="fa-solid fa-rotate-right"></i> Reset Demo Data
+            </button>
+            <button class="btn-save" onclick="openAddModal()">
+              <i class="fa-solid fa-plus"></i> Add Resource
+            </button>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon-wrapper stat-total"><i class="fa-solid fa-book-bookmark"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="dashTotal">0</div>
+              <div class="stat-label">Total Resources</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon-wrapper stat-completed"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="dashCompleted">0</div>
+              <div class="stat-label">Completed Tasks</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon-wrapper stat-progress"><i class="fa-solid fa-spinner"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="dashProgress">0</div>
+              <div class="stat-label">In Progress</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon-wrapper stat-tasks"><i class="fa-solid fa-list-check"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="dashPending">0</div>
+              <div class="stat-label">Pending Tasks</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon-wrapper stat-favorites"><i class="fa-solid fa-star"></i></div>
+            <div class="stat-info">
+              <div class="stat-value" id="dashFavs">0</div>
+              <div class="stat-label">Favorites</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="panel">
+            <div class="section-header">
+              <h3><i class="fa-solid fa-layer-group" style="color: var(--primary); margin-right: 8px;"></i> Resources by Subject</h3>
+              <a href="#" onclick="switchTab('resources')" style="color: #818cf8; text-decoration: none; font-size: 13px; font-weight: 600;">View All &rarr;</a>
+            </div>
+            <div class="subject-list" id="dashSubjectList"></div>
+          </div>
+
+          <div class="panel">
+            <div class="section-header">
+              <h3><i class="fa-solid fa-clock-rotate-left" style="color: var(--priority-medium); margin-right: 8px;"></i> Upcoming Deadlines</h3>
+            </div>
+            <div class="deadline-list" id="dashDeadlineList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESOURCES CATALOG TAB -->
+      <div id="tab-resources" class="tab-pane" style="display: none;">
+        <div class="top-bar">
+          <div class="page-title">
+            <h2>Study Resources Catalog</h2>
+            <p>Organize, search, and manage your websites, tutorials, and repositories.</p>
+          </div>
+          <div class="top-actions">
+            <button class="btn-save" onclick="openAddModal()">
+              <i class="fa-solid fa-plus"></i> Add Resource
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search by title, subject, tags, task..." oninput="renderApp()">
+          </div>
+          <select id="filterSubject" class="filter-select" onchange="renderApp()"><option value="">All Subjects</option></select>
+          <select id="filterCategory" class="filter-select" onchange="renderApp()">
+            <option value="">All Categories</option>
+            <option value="Tutorial">Tutorial</option>
+            <option value="YouTube">YouTube</option>
+            <option value="GitHub">GitHub</option>
+            <option value="Documentation">Documentation</option>
+            <option value="Research">Research</option>
+            <option value="Notes">Notes</option>
+            <option value="Other">Other</option>
+          </select>
+          <select id="filterStatus" class="filter-select" onchange="renderApp()">
+            <option value="">All Statuses</option>
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+          </select>
+          <select id="filterPriority" class="filter-select" onchange="renderApp()">
+            <option value="">All Priorities</option>
+            <option value="High">High Priority</option>
+            <option value="Medium">Medium Priority</option>
+            <option value="Low">Low Priority</option>
+          </select>
+          <button class="btn-cancel" onclick="resetFilterInputs()" style="padding: 10px 14px; font-size: 13px;">
+            <i class="fa-solid fa-filter-circle-xmark"></i> Clear Filters
+          </button>
+        </div>
+
+        <div class="resource-grid" id="gridResources"></div>
+      </div>
+
+      <!-- FAVORITES TAB -->
+      <div id="tab-favorites" class="tab-pane" style="display: none;">
+        <div class="top-bar">
+          <div class="page-title">
+            <h2><i class="fa-solid fa-star" style="color: #ec4899; margin-right: 6px;"></i> Favorite Resources</h2>
+            <p>Starred tutorials, documentation, and key links.</p>
+          </div>
+        </div>
+        <div class="resource-grid" id="gridFavorites"></div>
+      </div>
+
+      <!-- ARCHIVED TAB -->
+      <div id="tab-archived" class="tab-pane" style="display: none;">
+        <div class="top-bar">
+          <div class="page-title">
+            <h2><i class="fa-solid fa-box-archive" style="color: var(--text-dim); margin-right: 6px;"></i> Archived Resources</h2>
+            <p>Stored resources kept out of active view. Restore anytime.</p>
+          </div>
+        </div>
+        <div class="resource-grid" id="gridArchived"></div>
+      </div>
+
+      <!-- ABOUT TAB -->
+      <div id="tab-about" class="tab-pane" style="display: none;">
+        <div class="top-bar">
+          <div class="page-title">
+            <h2>About StudyVault & Demo Checklist</h2>
+            <p>Student resource & task management system.</p>
+          </div>
+        </div>
+        <div class="panel">
+          <h3 style="margin-bottom: 12px; font-family: 'Outfit'; color: #818cf8;"><i class="fa-solid fa-graduation-cap"></i> Concept</h3>
+          <p style="color: var(--text-muted); line-height: 1.6; font-size: 14px;">
+            StudyVault bridges the gap between saving study links and actually completing tasks. Every resource links directly:
+          </p>
+          <div style="background-color: var(--bg-input); padding: 16px; border-radius: 10px; margin: 16px 0; display: flex; align-items: center; justify-content: space-around; font-weight: 600; font-size: 14px; border: 1px solid var(--border-color);">
+            <div><i class="fa-solid fa-link" style="color: var(--primary);"></i> Study Resource</div> &rarr;
+            <div><i class="fa-solid fa-list-check" style="color: var(--priority-medium);"></i> Action Task</div> &rarr;
+            <div><i class="fa-solid fa-calendar-days" style="color: var(--priority-high);"></i> Target Deadline</div> &rarr;
+            <div><i class="fa-solid fa-circle-check" style="color: var(--status-completed);"></i> Completion</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Global Modal Form -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add New Study Resource</h3>
+        <button class="btn-close-modal" onclick="closeModal()">&times;</button>
+      </div>
+      <form id="resourceForm" onsubmit="saveResource(event)">
+        <input type="hidden" id="resId">
+        
+        <div class="form-group full">
+          <label for="resUrl">Resource Web URL *</label>
+          <div class="url-input-wrap">
+            <input type="url" id="resUrl" placeholder="https://example.com/flask-tutorial" required onblur="checkDuplicateUrl()">
+            <button type="button" class="btn-auto-title" onclick="autoFetchTitle()" id="btnAutoTitle">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Auto Title
+            </button>
+          </div>
+          <small id="dupWarning" style="color: var(--priority-medium); font-size: 11px; margin-top: 4px; display: none;"></small>
+        </div>
+
+        <div class="form-group full">
+          <label for="resTitle">Resource Title *</label>
+          <input type="text" id="resTitle" placeholder="e.g. Python Flask Tutorial & Authentication" required>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="resSubject">Subject *</label>
+            <input type="text" id="resSubject" placeholder="e.g. Python, DBMS, Web Dev" required>
+          </div>
+          <div class="form-group">
+            <label for="resCategory">Category</label>
+            <select id="resCategory">
+              <option value="Tutorial">Tutorial</option>
+              <option value="YouTube">YouTube</option>
+              <option value="GitHub">GitHub</option>
+              <option value="Documentation">Documentation</option>
+              <option value="Research">Research</option>
+              <option value="Notes">Notes</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group full">
+          <label for="resTask">Associated Action / Task (Optional)</label>
+          <input type="text" id="resTask" placeholder="e.g. Complete authentication section">
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="resDeadline">Task Deadline</label>
+            <input type="date" id="resDeadline">
+          </div>
+          <div class="form-group">
+            <label for="resPriority">Priority</label>
+            <select id="resPriority">
+              <option value="Low">Low</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="resStatus">Status</label>
+            <select id="resStatus">
+              <option value="Not Started">Not Started</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="resTags">Tags (comma separated)</label>
+            <input type="text" id="resTags" placeholder="e.g. flask, auth, python">
+          </div>
+        </div>
+
+        <div class="form-group full">
+          <label for="resDesc">Description / Notes</label>
+          <textarea id="resDesc" rows="3" placeholder="Key notes about this link..."></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+          <button type="submit" class="btn-save" id="btnSave">Save Resource</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-card" style="max-width: 400px; text-align: center;">
+      <div style="font-size: 36px; color: var(--priority-high); margin-bottom: 10px;">
+        <i class="fa-solid fa-trash-can"></i>
+      </div>
+      <h3>Confirm Deletion</h3>
+      <p style="color: var(--text-muted); font-size: 13px; margin-top: 6px;">Permanently delete this resource?</p>
+      <div class="modal-footer" style="justify-content: center; margin-top: 16px;">
+        <button type="button" class="btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+        <button type="button" class="btn-save" style="background: var(--priority-high);" onclick="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Application Logic -->
+  <script>
+    const STORAGE_KEY = 'studyvault_resources_v1';
+    let resources = [];
+    let deleteTargetId = null;
+
+    const initialSeed = [
+      {
+        id: 101,
+        title: "Python Flask Tutorial & Documentation",
+        url: "https://flask.palletsprojects.com/en/stable/",
+        subject: "Python",
+        category: "Tutorial",
+        tags: "flask, web, python, backend",
+        description: "Official documentation covering Flask fundamentals, application context, blue-prints, and request handling.",
+        task: "Complete authentication section",
+        deadline: "2026-09-20",
+        priority: "High",
+        status: "In Progress",
+        favorite: 1,
+        archived: 0
+      },
+      {
+        id: 102,
+        title: "React Documentation & Hooks Guide",
+        url: "https://react.dev/learn",
+        subject: "Web Dev",
+        category: "Documentation",
+        tags: "react, frontend, javascript, hooks",
+        description: "Interactive guide on modern React, functional components, useEffect, and custom hooks.",
+        task: "Read hooks documentation",
+        deadline: "2026-09-18",
+        priority: "High",
+        status: "In Progress",
+        favorite: 1,
+        archived: 0
+      },
+      {
+        id: 103,
+        title: "DBMS Normalization Notes & Exercises",
+        url: "https://www.geeksforgeeks.org/dbms-normalization-1nf-2nf-3nf-bcnf/",
+        subject: "DBMS",
+        category: "Notes",
+        tags: "database, normalization, 3NF, BCNF",
+        description: "Comprehensive reference guide explaining Functional Dependencies, 1NF, 2NF, 3NF, and BCNF.",
+        task: "Practice 3NF and BCNF normal form examples",
+        deadline: "2026-09-22",
+        priority: "Medium",
+        status: "Not Started",
+        favorite: 0,
+        archived: 0
+      },
+      {
+        id: 104,
+        title: "GitHub Student Developer Repo",
+        url: "https://github.com/public-apis/public-apis",
+        subject: "Web Dev",
+        category: "GitHub",
+        tags: "github, open-source, apis",
+        description: "Collective list of free APIs for software development.",
+        task: "Clone repository and review structure",
+        deadline: "2026-09-28",
+        priority: "Low",
+        status: "Not Started",
+        favorite: 0,
+        archived: 0
+      },
+      {
+        id: 105,
+        title: "SQL Join Queries Tutorial",
+        url: "https://www.w3schools.com/sql/sql_join.asp",
+        subject: "DBMS",
+        category: "Tutorial",
+        tags: "sql, dbms, queries",
+        description: "Visual breakdown of INNER JOIN, LEFT JOIN, and RIGHT JOIN.",
+        task: "Solve join queries exercise",
+        deadline: "2026-09-15",
+        priority: "High",
+        status: "Completed",
+        favorite: 0,
+        archived: 0
+      }
+    ];
+
+    function loadData() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        try { resources = JSON.parse(raw); } catch (e) { resources = [...initialSeed]; }
+      } else {
+        resources = [...initialSeed];
+        saveData();
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(resources));
+      renderApp();
+    }
+
+    function resetSampleData() {
+      if (confirm("Reset all study resources to initial sample data?")) {
+        resources = [...initialSeed];
+        saveData();
+        showToast("Sample data restored!", "success");
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadData();
+    });
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(`tab-${tab}`).style.display = 'block';
+      const navEl = document.getElementById(`nav-${tab}`);
+      if (navEl) navEl.classList.add('active');
+
+      renderApp();
+    }
+
+    function renderApp() {
+      updateDashboard();
+      updateSubjectFilterDropdown();
+      renderGrid('gridResources', r => r.archived === 0);
+      renderGrid('gridFavorites', r => r.archived === 0 && r.favorite === 1);
+      renderGrid('gridArchived', r => r.archived === 1);
+    }
+
+    function updateDashboard() {
+      const active = resources.filter(r => r.archived === 0);
+      const total = active.length;
+      const completed = active.filter(r => r.status === 'Completed').length;
+      const inProgress = active.filter(r => r.status === 'In Progress').length;
+      const pendingTasks = active.filter(r => r.status !== 'Completed' && r.task && r.task.trim()).length;
+      const favs = active.filter(r => r.favorite === 1).length;
+
+      document.getElementById('dashTotal').innerText = total;
+      document.getElementById('dashCompleted').innerText = completed;
+      document.getElementById('dashProgress').innerText = inProgress;
+      document.getElementById('dashPending').innerText = pendingTasks;
+      document.getElementById('dashFavs').innerText = favs;
+
+      // Subject breakdown
+      const counts = {};
+      active.forEach(r => {
+        const s = r.subject || 'Other';
+        counts[s] = (counts[s] || 0) + 1;
+      });
+
+      const sbContainer = document.getElementById('dashSubjectList');
+      if (Object.keys(counts).length === 0) {
+        sbContainer.innerHTML = `<p style="color: var(--text-muted); font-size: 13px;">No subjects added yet.</p>`;
+      } else {
+        sbContainer.innerHTML = Object.keys(counts).map(s => {
+          const count = counts[s];
+          const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+          return `
+            <div class="subject-item">
+              <div class="subject-meta">
+                <span><strong>${s}</strong></span>
+                <span style="color: var(--text-muted);">${count} items (${pct}%)</span>
+              </div>
+              <div class="subject-bar-bg"><div class="subject-bar-fill" style="width: ${pct}%;"></div></div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Upcoming Deadlines
+      const deadlines = active
+        .filter(r => r.deadline && r.status !== 'Completed')
+        .sort((a, b) => a.deadline.localeCompare(b.deadline))
+        .slice(0, 5);
+
+      const dlContainer = document.getElementById('dashDeadlineList');
+      const todayStr = new Date().toISOString().split('T')[0];
+
+      if (deadlines.length === 0) {
+        dlContainer.innerHTML = `<p style="color: var(--text-dim); text-align: center; padding: 10px;">No pending deadlines!</p>`;
+      } else {
+        dlContainer.innerHTML = deadlines.map(d => {
+          const isOverdue = d.deadline < todayStr;
+          return `
+            <div class="deadline-card ${isOverdue ? 'overdue' : ''}">
+              <div class="deadline-info">
+                <h4>${d.title}</h4>
+                <p><i class="fa-solid fa-check-double"></i> ${d.task || 'Study Resource'}</p>
+              </div>
+              <div class="deadline-tag">
+                <span class="due-date ${isOverdue ? 'overdue-text' : ''}">${isOverdue ? 'Overdue (' + d.deadline + ')' : d.deadline}</span>
+                <span class="badge badge-priority-${d.priority.toLowerCase()}">${d.priority}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    function updateSubjectFilterDropdown() {
+      const select = document.getElementById('filterSubject');
+      if (!select) return;
+      const current = select.value;
+      const set = new Set();
+      resources.forEach(r => r.subject && set.add(r.subject));
+      
+      let html = `<option value="">All Subjects</option>`;
+      Array.from(set).sort().forEach(s => {
+        html += `<option value="${s}" ${current === s ? 'selected' : ''}>${s}</option>`;
+      });
+      select.innerHTML = html;
+    }
+
+    function renderGrid(gridId, predicate) {
+      const container = document.getElementById(gridId);
+      if (!container) return;
+
+      let list = resources.filter(predicate);
+
+      if (gridId === 'gridResources') {
+        const q = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+        const sub = document.getElementById('filterSubject')?.value || '';
+        const cat = document.getElementById('filterCategory')?.value || '';
+        const st = document.getElementById('filterStatus')?.value || '';
+        const pri = document.getElementById('filterPriority')?.value || '';
+
+        if (sub) list = list.filter(r => r.subject.toLowerCase() === sub.toLowerCase());
+        if (cat) list = list.filter(r => (r.category || 'Other').toLowerCase() === cat.toLowerCase());
+        if (st) list = list.filter(r => r.status.toLowerCase() === st.toLowerCase());
+        if (pri) list = list.filter(r => r.priority.toLowerCase() === pri.toLowerCase());
+        if (q) {
+          list = list.filter(r =>
+            r.title.toLowerCase().includes(q) ||
+            r.subject.toLowerCase().includes(q) ||
+            (r.tags && r.tags.toLowerCase().includes(q)) ||
+            (r.task && r.task.toLowerCase().includes(q)) ||
+            (r.description && r.description.toLowerCase().includes(q))
+          );
+        }
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fa-solid fa-folder-open empty-icon"></i>
+            <h4>No study resources found</h4>
+            <p>Try clearing filters or adding a new resource!</p>
+          </div>
+        `;
+        return;
+      }
+
+      const todayStr = new Date().toISOString().split('T')[0];
+
+      container.innerHTML = list.map(r => {
+        const isFav = r.favorite === 1;
+        const isArch = r.archived === 1;
+        const isOverdue = r.deadline && r.deadline < todayStr && r.status !== 'Completed';
+
+        const tagPills = r.tags ? r.tags.split(',').map(t => `<span class="tag-pill">#${t.trim()}</span>`).join(' ') : '';
+
+        return `
+          <div class="resource-card">
+            <div class="card-header">
+              <div class="card-badges">
+                <span class="badge badge-subject">${r.subject}</span>
+                <span class="badge badge-category">${r.category || 'Other'}</span>
+                <span class="badge badge-priority-${r.priority.toLowerCase()}">${r.priority}</span>
+              </div>
+              ${!isArch ? `
+                <button class="btn-fav ${isFav ? 'active' : ''}" onclick="toggleFav(${r.id})">
+                  <i class="fa-${isFav ? 'solid' : 'regular'} fa-star"></i>
+                </button>
+              ` : ''}
+            </div>
+
+            <div>
+              <h3 class="card-title">${r.title}</h3>
+              ${r.description ? `<p class="card-desc" style="margin-top: 6px;">${r.description}</p>` : ''}
+            </div>
+
+            ${r.task ? `
+              <div class="card-task-box">
+                <div class="card-task-title"><i class="fa-solid fa-list-check"></i> Associated Action</div>
+                <div class="card-task-text">${r.task}</div>
+              </div>
+            ` : ''}
+
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              ${r.deadline ? `<div class="card-deadline"><i class="fa-solid fa-calendar-day"></i> Due: <span class="due-date ${isOverdue ? 'overdue-text' : ''}">${isOverdue ? 'Overdue (' + r.deadline + ')' : r.deadline}</span></div>` : '<div></div>'}
+              <select class="status-dropdown badge-status-${r.status.toLowerCase().replace(/\s+/g, '-')}" onchange="changeStatus(${r.id}, this.value)">
+                <option value="Not Started" ${r.status === 'Not Started' ? 'selected' : ''}>Not Started</option>
+                <option value="In Progress" ${r.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                <option value="Completed" ${r.status === 'Completed' ? 'selected' : ''}>Completed</option>
+              </select>
+            </div>
+
+            ${tagPills ? `<div class="tags-list">${tagPills}</div>` : ''}
+
+            <div class="card-actions">
+              <a href="${r.url}" target="_blank" rel="noopener" class="btn-open-link">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Resource
+              </a>
+              <div class="btn-action-group">
+                ${isArch ? `
+                  <button class="btn-icon" onclick="toggleArchive(${r.id})" title="Restore"><i class="fa-solid fa-rotate-left"></i></button>
+                  <button class="btn-icon danger" onclick="openDeleteModal(${r.id})" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                ` : `
+                  <button class="btn-icon" onclick="openEditModal(${r.id})" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                  <button class="btn-icon" onclick="toggleArchive(${r.id})" title="Archive"><i class="fa-solid fa-box-archive"></i></button>
+                  <button class="btn-icon danger" onclick="openDeleteModal(${r.id})" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                `}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Modal Operations
+    function openAddModal() {
+      document.getElementById('modalTitle').innerText = 'Add New Study Resource';
+      document.getElementById('resourceForm').reset();
+      document.getElementById('resId').value = '';
+      document.getElementById('dupWarning').style.display = 'none';
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function openEditModal(id) {
+      const item = resources.find(r => r.id === id);
+      if (!item) return;
+      document.getElementById('modalTitle').innerText = 'Edit Study Resource';
+      document.getElementById('resId').value = item.id;
+      document.getElementById('resUrl').value = item.url;
+      document.getElementById('resTitle').value = item.title;
+      document.getElementById('resSubject').value = item.subject;
+      document.getElementById('resCategory').value = item.category || 'Other';
+      document.getElementById('resTask').value = item.task || '';
+      document.getElementById('resDeadline').value = item.deadline || '';
+      document.getElementById('resPriority').value = item.priority || 'Medium';
+      document.getElementById('resStatus').value = item.status || 'Not Started';
+      document.getElementById('resTags').value = item.tags || '';
+      document.getElementById('resDesc').value = item.description || '';
+      document.getElementById('dupWarning').style.display = 'none';
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    function checkDuplicateUrl() {
+      const url = document.getElementById('resUrl').value.trim().toLowerCase();
+      const currentId = document.getElementById('resId').value;
+      const warning = document.getElementById('dupWarning');
+
+      if (!url) { warning.style.display = 'none'; return; }
+
+      const exists = resources.some(r => r.url.toLowerCase().replace(/\/$/, '') === url.replace(/\/$/, '') && String(r.id) !== String(currentId));
+      if (exists) {
+        warning.innerText = 'This resource URL is already saved in your vault.';
+        warning.style.display = 'block';
+      } else {
+        warning.style.display = 'none';
+      }
+    }
+
+    function autoFetchTitle() {
+      const url = document.getElementById('resUrl').value.trim();
+      const titleInput = document.getElementById('resTitle');
+      const btn = document.getElementById('btnAutoTitle');
+
+      if (!url) { showToast('Please enter a URL first!', 'warning'); return; }
+
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Fetching...`;
+      
+      // Use client fetch or fallback title clean up
+      fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`)
+        .then(res => res.json())
+        .then(data => {
+          btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Auto Title`;
+          if (data && data.contents) {
+            const match = data.contents.match(/<title[^>]*>([^<]+)<\/title>/i);
+            if (match && match[1]) {
+              titleInput.value = match[1].trim();
+              showToast("Title fetched automatically!", "success");
+              return;
+            }
+          }
+          fallbackTitleGenerator(url);
+        })
+        .catch(() => {
+          btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Auto Title`;
+          fallbackTitleGenerator(url);
+        });
+    }
+
+    function fallbackTitleGenerator(url) {
+      try {
+        const parsed = new URL(url.startsWith('http') ? url : 'https://' + url);
+        let name = parsed.pathname.split('/').filter(Boolean).pop() || parsed.hostname;
+        name = name.replace(/[-_]/g, ' ').replace(/\.[^/.]+$/, '');
+        name = name.charAt(0).toUpperCase() + name.slice(1);
+        document.getElementById('resTitle').value = name;
+        showToast("Auto-generated clean title from URL!", "info");
+      } catch (e) {
+        showToast("Please type title manually.", "warning");
+      }
+    }
+
+    function saveResource(event) {
+      event.preventDefault();
+      const id = document.getElementById('resId').value;
+      const url = document.getElementById('resUrl').value.trim();
+      const title = document.getElementById('resTitle').value.trim();
+      const subject = document.getElementById('resSubject').value.trim();
+
+      const exists = resources.some(r => r.url.toLowerCase().replace(/\/$/, '') === url.toLowerCase().replace(/\/$/, '') && String(r.id) !== String(id));
+      if (exists) {
+        showToast('This URL is already saved in your StudyVault!', 'warning');
+        return;
+      }
+
+      const itemData = {
+        title,
+        url: url.startsWith('http') ? url : 'https://' + url,
+        subject,
+        category: document.getElementById('resCategory').value,
+        task: document.getElementById('resTask').value.trim(),
+        deadline: document.getElementById('resDeadline').value,
+        priority: document.getElementById('resPriority').value,
+        status: document.getElementById('resStatus').value,
+        tags: document.getElementById('resTags').value.trim(),
+        description: document.getElementById('resDesc').value.trim()
+      };
+
+      if (id) {
+        const idx = resources.findIndex(r => String(r.id) === String(id));
+        if (idx !== -1) {
+          resources[idx] = { ...resources[idx], ...itemData };
+          showToast('Resource updated successfully!', 'success');
+        }
+      } else {
+        const newItem = {
+          id: Date.now(),
+          ...itemData,
+          favorite: 0,
+          archived: 0
+        };
+        resources.unshift(newItem);
+        showToast('Study resource added!', 'success');
+      }
+
+      closeModal();
+      saveData();
+    }
+
+    function toggleFav(id) {
+      const item = resources.find(r => r.id === id);
+      if (item) {
+        item.favorite = item.favorite === 1 ? 0 : 1;
+        showToast(item.favorite === 1 ? 'Added to Favorites!' : 'Removed from Favorites', 'info');
+        saveData();
+      }
+    }
+
+    function toggleArchive(id) {
+      const item = resources.find(r => r.id === id);
+      if (item) {
+        item.archived = item.archived === 1 ? 0 : 1;
+        showToast(item.archived === 1 ? 'Resource archived!' : 'Resource restored!', 'info');
+        saveData();
+      }
+    }
+
+    function changeStatus(id, newStatus) {
+      const item = resources.find(r => r.id === id);
+      if (item) {
+        item.status = newStatus;
+        showToast(`Status updated to "${newStatus}"`, 'success');
+        saveData();
+      }
+    }
+
+    function openDeleteModal(id) {
+      deleteTargetId = id;
+      document.getElementById('deleteModal').classList.add('active');
+    }
+    function closeDeleteModal() {
+      deleteTargetId = null;
+      document.getElementById('deleteModal').classList.remove('active');
+    }
+    function confirmDelete() {
+      if (deleteTargetId) {
+        resources = resources.filter(r => r.id !== deleteTargetId);
+        showToast('Resource permanently deleted!', 'success');
+        closeDeleteModal();
+        saveData();
+      }
+    }
+
+    function resetFilterInputs() {
+      if (document.getElementById('searchInput')) document.getElementById('searchInput').value = '';
+      if (document.getElementById('filterSubject')) document.getElementById('filterSubject').value = '';
+      if (document.getElementById('filterCategory')) document.getElementById('filterCategory').value = '';
+      if (document.getElementById('filterStatus')) document.getElementById('filterStatus').value = '';
+      if (document.getElementById('filterPriority')) document.getElementById('filterPriority').value = '';
+      renderApp();
+    }
+
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<i class="fa-solid fa-circle-info"></i><div class="toast-msg">${msg}</div>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
